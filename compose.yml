@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  webserver:
+    image: "httpd:2.4"
+    container_name: horsechess_webserver
+    restart: unless-stopped
+    volumes:
+      - ./data:/usr/local/apache2/htdocs/
+    networks:
+      - proxy
+    labels:
+      traefik.enable: true
+      traefik.http.routers.horsechess.entryPoints: https
+      traefik.http.routers.horsechess.rule: Host(`${HORSE_CHESS_WEBSERVER}`)
+      traefik.http.routers.horsechess.tls: true
+      traefik.http.routers.horsechess.tls.certresolver: letsencrypt
+
+networks:
+  proxy:
+    driver: bridge
+    external: true
